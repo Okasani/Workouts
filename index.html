@@ -1,707 +1,1493 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <title>FitTrack</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <meta name="theme-color" content="#09090b" />
+  <title>FitTrack</title>
 
-    <style>
-        :root {
-            --bg: #09090b;
-            --card-bg: #18181b;
-            --card-border: #27272a;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --text: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --radius: 12px;
-            --font-stack: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
+  <style>
+    :root{
+      --bg:#09090b;
+      --card-bg:#18181b;
+      --card-border:#27272a;
+      --muted:#a1a1aa;
+      --text:#f4f4f5;
+      --primary:#3b82f6;
+      --primary-hover:#2563eb;
+      --danger:#ef4444;
+      --success:#22c55e;
+      --warn:#f59e0b;
+      --radius:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background: radial-gradient(1200px 700px at 30% -10%, rgba(59,130,246,.18), transparent 55%),
+                  radial-gradient(1000px 600px at 80% 0%, rgba(34,197,94,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      padding-bottom: 90px;
+    }
 
-        * { box-sizing: border-box; }
+    .wrap{
+      max-width:720px;
+      margin:0 auto;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
 
-        body {
-            margin: 0;
-            font-family: var(--font-stack);
-            background-color: var(--bg);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            padding-bottom: 80px;
-        }
+    /* Header */
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      padding-top:10px;
+    }
+    .brand h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:-0.03em;
+      background:linear-gradient(to right, #fff, #c7c7cf);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .brand p{margin:6px 0 0;color:var(--muted);font-size:14px}
 
-        .wrap {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+    .rightbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
 
-        /* --- Header --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-        }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:rgba(24,24,27,.85);
+      border:1px solid rgba(39,39,42,.9);
+      border-radius:999px;
+      padding:10px 12px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 1px 0 rgba(255,255,255,.04) inset;
+    }
+    .pill .avatar{font-size:18px}
+    .pill .hint{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .pill .name{margin:0;font-size:14px;font-weight:650}
 
-        .header-text h1 {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: -0.03em;
-            background: linear-gradient(to right, #fff, #a1a1aa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .sub { margin: 5px 0 0; color: var(--text-muted); font-size: 14px; }
+    /* Buttons */
+    .btn{
+      border:none;
+      border-radius:var(--radius);
+      cursor:pointer;
+      font-weight:650;
+      font-family:var(--font);
+      transition:.18s;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:12px 14px;
+      user-select:none;
+    }
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.primary:hover{background:var(--primary-hover)}
+    .btn.secondary{
+      background:rgba(39,39,42,.75);
+      border:1px solid rgba(39,39,42,.95);
+      color:var(--text);
+    }
+    .btn.secondary:hover{transform: translateY(-1px); border-color:#3f3f46}
+    .btn.ghost{background:transparent;color:var(--muted);padding:10px 12px}
+    .btn.ghost:hover{background:rgba(39,39,42,.75);color:var(--text)}
+    .btn.danger{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.18)}
+    .btn.danger:hover{background:rgba(239,68,68,.18)}
+    .icon-btn{
+      width:40px;height:40px;
+      padding:0;
+      border-radius:999px;
+      background:transparent;
+      color:var(--muted);
+      border:1px solid rgba(39,39,42,.7);
+    }
+    .icon-btn:hover{background:rgba(39,39,42,.7);color:#fff}
 
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            padding: 8px 12px 8px 16px;
-            border-radius: 50px;
-            border: 1px solid var(--card-border);
-        }
+    /* Inputs */
+    .input{
+      width:100%;
+      padding:14px 14px;
+      border-radius:var(--radius);
+      border:1px solid rgba(39,39,42,.95);
+      background:rgba(39,39,42,.55);
+      color:var(--text);
+      font-size:16px;
+      outline:none;
+      transition:.18s;
+      font-family:var(--font);
+    }
+    .input:focus{border-color:rgba(59,130,246,.9); box-shadow: 0 0 0 3px rgba(59,130,246,.18);}
+    textarea.input{min-height:140px;resize:vertical;line-height:1.5}
 
-        .greeting h3 { margin: 0; font-size: 14px; font-weight: 600; }
-        .greeting .hint { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+    :focus-visible{outline:2px solid rgba(59,130,246,.75); outline-offset:2px; border-radius:10px}
 
-        /* --- Common Elements --- */
-        .input {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: var(--radius);
-            border: 1px solid var(--card-border);
-            background: #27272a;
-            color: var(--text);
-            font-size: 16px;
-            transition: all 0.2s;
-            font-family: var(--font-stack);
-        }
-        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    /* Cards */
+    .card{
+      background:rgba(24,24,27,.9);
+      border:1px solid rgba(39,39,42,.95);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
 
-        /* UPDATED: Textarea for pasting lists */
-        textarea.input {
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.5;
-        }
+    /* Progress */
+    .progress-header{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted);font-weight:550;margin-bottom:10px}
+    .progress-bar-bg{height:8px;background:rgba(39,39,42,.85);border-radius:999px;overflow:hidden}
+    .progress-bar-fill{height:100%;width:0%;background:var(--success);transition:width .35s ease;border-radius:999px}
 
-        .btn {
-            cursor: pointer;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            transition: all 0.2s;
-            font-family: var(--font-stack);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    /* Add Trigger */
+    .add-trigger{
+      width:100%;
+      border-radius:var(--radius);
+      padding:18px;
+      cursor:pointer;
+      border:1px dashed rgba(63,63,70,.95);
+      background:rgba(39,39,42,.25);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      color:var(--muted);
+      transition:.18s;
+      font-weight:650;
+    }
+    .add-trigger:hover{
+      border-color:rgba(59,130,246,.9);
+      background:rgba(59,130,246,.07);
+      color:var(--primary);
+      transform: translateY(-1px);
+    }
+    .plus{font-size:18px; font-weight:800}
 
-        .btn.primary { background: var(--primary); color: white; }
-        .btn.primary:hover { background: var(--primary-hover); }
-        .btn.ghost { background: transparent; color: var(--text-muted); }
-        .btn.ghost:hover { background: #27272a; color: var(--text); }
-        .btn.text-danger { background: transparent; color: var(--danger); font-size: 13px; padding: 6px 12px; }
-        .btn.text-danger:hover { background: rgba(239, 68, 68, 0.1); }
+    /* Toolbar */
+    .toolbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      margin-top:8px;
+    }
+    .toolbar .left, .toolbar .right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{
+      border:1px solid rgba(39,39,42,.95);
+      background:rgba(39,39,42,.45);
+      color:var(--muted);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      transition:.18s;
+    }
+    .chip:hover{border-color:#3f3f46;color:var(--text)}
+    .chip.active{
+      border-color:rgba(59,130,246,.75);
+      color:#fff;
+      background:rgba(59,130,246,.14);
+    }
 
-        .icon-btn { padding: 8px; border-radius: 50%; background: transparent; color: var(--text-muted); }
-        .icon-btn:hover { background: #3f3f46; color: white; }
+    /* List */
+    .listHeader{display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px}
+    .listHeader h2{margin:0;font-size:18px}
+    .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            padding: 20px;
-        }
+    .item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:14px;
+      border-radius:var(--radius);
+      border:1px solid rgba(39,39,42,.95);
+      background:rgba(39,39,42,.25);
+      transition:.18s;
+    }
+    .item:hover{border-color:#52525b}
+    .item.done{opacity:.7; border-style:dashed; background:transparent}
+    .item.done .name{text-decoration:line-through;color:var(--muted)}
 
-        /* --- Add Trigger Box --- */
-        .add-trigger-box {
-            width: 100%;
-            background: rgba(39, 39, 42, 0.3);
-            border: 2px dashed var(--card-border);
-            border-radius: var(--radius);
-            padding: 25px;
-            color: var(--text-muted);
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .add-trigger-box:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(59, 130, 246, 0.05);
-        }
-        .plus-icon { font-size: 20px; font-weight: bold; }
+    .check-wrap{position:relative;width:22px;height:22px;flex:0 0 22px}
+    .check{
+      opacity:0;
+      width:22px;height:22px;
+      position:absolute;inset:0;z-index:2;margin:0;cursor:pointer;
+    }
+    .custom-check{
+      width:22px;height:22px;border-radius:7px;border:2px solid #52525b;
+      display:flex;align-items:center;justify-content:center;
+      transition:.18s;background:transparent;
+      position:absolute;inset:0;pointer-events:none;
+    }
+    .check:checked + .custom-check{background:var(--success);border-color:var(--success)}
+    .check:checked + .custom-check::after{content:"✔";font-size:14px;color:#06110a}
 
-        /* --- Stats / Progress --- */
-        .stats-card { padding: 16px 20px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500;}
-        .progress-bar-bg { height: 6px; background: #27272a; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease-out; border-radius: 10px; }
+    .item-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+    .name{font-size:15px;font-weight:650;word-break:break-word}
+    .meta{font-size:12px;color:var(--muted)}
+    .mini-bar{height:6px;background:rgba(39,39,42,.85);border-radius:999px;overflow:hidden;margin-top:6px}
+    .mini-fill{height:100%;width:0%;background:rgba(34,197,94,.95);transition:width .25s ease}
 
-        /* --- List --- */
-        .listHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-        .listHeader h2 { font-size: 18px; margin: 0; color: var(--text); }
-        .list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+    .actions{display:flex;gap:6px;align-items:center}
+    .action-btn{
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      width:34px;height:34px;
+      border-radius:10px;
+      cursor:pointer;
+      transition:.18s;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid transparent;
+    }
+    .action-btn:hover{background:rgba(63,63,70,.55);color:#fff;border-color:rgba(39,39,42,.6)}
+    .action-btn.delete:hover{background:rgba(239,68,68,.14);color:var(--danger);border-color:rgba(239,68,68,.2)}
+    .action-btn.warn:hover{background:rgba(245,158,11,.14);color:var(--warn);border-color:rgba(245,158,11,.2)}
 
-        .item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px;
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius);
-            background: rgba(39, 39, 42, 0.4);
-            transition: transform 0.2s, border-color 0.2s;
-            animation: slideIn 0.3s ease-out;
-            cursor: pointer;
-        }
-        .item:hover { border-color: #52525b; }
+    .empty{padding:34px 0;text-align:center;color:var(--muted)}
+    .empty .emoji{font-size:40px;opacity:.6;margin-bottom:10px}
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .hidden{display:none !important}
 
-        .item.done { opacity: 0.6; background: transparent; border-style: dashed; }
-        .item.done .name { text-decoration: line-through; color: var(--text-muted); }
+    /* Modals */
+    .overlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
+      display:flex;align-items:center;justify-content:center;
+      z-index:100;
+      padding:18px;
+    }
+    .modal{
+      width:100%;
+      max-width:420px;
+      background:rgba(24,24,27,.96);
+      border:1px solid rgba(39,39,42,.95);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: var(--shadow);
+    }
+    .modal h3{margin:0 0 10px;font-size:18px}
+    .modal p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 
-        /* Checkbox */
-        .check-container { position: relative; width: 22px; height: 22px; flex-shrink: 0; }
-        .check { opacity: 0; width: 100%; height: 100%; cursor: pointer; position: absolute; z-index: 2; margin: 0; }
-        .custom-check {
-            width: 22px; height: 22px; border: 2px solid #52525b; border-radius: 6px; position: absolute; top: 0; left: 0; pointer-events: none; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .check:checked + .custom-check { background: var(--success); border-color: var(--success); }
-        .check:checked + .custom-check::after { content: '✔'; font-size: 14px; color: black; display: block; }
+    /* Toast */
+    .toasts{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:16px;
+      width:min(720px, calc(100% - 24px));
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      z-index:200;
+      pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;
+      background:rgba(24,24,27,.96);
+      border:1px solid rgba(39,39,42,.95);
+      border-radius:16px;
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      box-shadow: var(--shadow);
+    }
+    .toast .msg{color:var(--text);font-size:14px}
+    .toast .toast-actions{display:flex;gap:8px;align-items:center}
 
-        .item-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
-        .name { display: block; font-size: 15px; word-break: break-word; font-weight: 500; }
-        .sub-count { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+    /* Detail */
+    .back{
+      display:inline-flex;align-items:center;gap:10px;
+      color:var(--muted);cursor:pointer;
+      padding:10px 0;
+      user-select:none;
+    }
+    .back:hover{color:var(--primary)}
 
-        /* Actions */
-        .actions { display: flex; gap: 4px; opacity: 0.5; transition: 0.2s; }
-        .item:hover .actions { opacity: 1; }
-        .action-btn { background: transparent; border: none; cursor: pointer; color: var(--text-muted); padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .action-btn:hover { background: #3f3f46; color: white; }
-        .action-btn.delete:hover { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .tag{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color:var(--primary);
+      background:rgba(59,130,246,.12);
+      border:1px solid rgba(59,130,246,.18);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-top:10px;
+      width:max-content;
+    }
 
-        .edit-input { width: 100%; padding: 8px; font-size: 15px; background: #000; border: 1px solid var(--primary); color: white; border-radius: 6px; font-family: var(--font-stack); }
+    @media (max-width: 520px){
+      .topbar{flex-direction:column;align-items:flex-start}
+      .rightbar{width:100%;justify-content:space-between}
+      .pill{width:100%;justify-content:space-between}
+    }
 
-        /* Empty State */
-        .empty-state { text-align: center; padding: 40px 0; color: var(--text-muted); }
-        .empty-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
-        .hidden { display: none !important; }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-        }
-        .modal { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; width: 90%; max-width: 350px; }
-        .modal h3 { margin-top: 0; margin-bottom: 16px; font-size: 18px; color: var(--text); }
-        .modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
-
-        /* Detail View Specifics */
-        .back-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer; color: var(--text-muted); font-size: 14px;}
-        .back-nav:hover { color: var(--primary); }
-
-        .folder-tag {
-            background: rgba(59, 130, 246, 0.1); color: var(--primary);
-            padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-left: 10px; display: inline-block;
-        }
-
-        @media (max-width: 480px) {
-            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .profile-card { width: 100%; justify-content: space-between; }
-        }
-    </style>
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important}
+    }
+  </style>
 </head>
+
 <body>
 <main class="wrap">
+  <!-- HOME VIEW -->
+  <section id="homeView">
+    <header class="topbar">
+      <div class="brand">
+        <h1>FitTrack</h1>
+        <p>Organize your sessions. Paste workouts. Track progress.</p>
+      </div>
 
-    <div id="homeView">
-        <header class="header">
-            <div class="header-text">
-                <h1 id="title">FitTrack</h1>
-                <p class="sub">Organize your sessions.</p>
-            </div>
+      <div class="rightbar">
+        <div class="pill" aria-label="Profile">
+          <span class="avatar" aria-hidden="true">💪</span>
+          <div>
+            <p class="hint">Welcome back,</p>
+            <p class="name" id="helloName">Athlete</p>
+          </div>
+          <button class="btn icon-btn" id="editNameBtn" title="Edit Name" aria-label="Edit Name">
+            ✎
+          </button>
+        </div>
 
-            <div class="profile-card">
-                <div class="greeting">
-                    <span class="avatar">💪</span>
-                    <span>
-                        <p class="hint">Welcome back,</p>
-                        <h3 id="helloName">Athlete</h3>
-                    </span>
-                </div>
-                <button id="editNameBtn" class="btn icon-btn" title="Edit Name">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                </button>
-            </div>
-        </header>
-
-        <section class="card stats-card" style="margin-top: 24px;">
-            <div class="progress-header">
-                <span>Total Completion</span>
-                <span id="homeProgressText">0%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div id="homeProgressBar" class="progress-bar-fill"></div>
-            </div>
-        </section>
-
-        <button id="openAddSessionModalBtn" class="add-trigger-box" style="margin-top: 24px;">
-            <span class="plus-icon">+</span>
-            <span>Create New Session Folder</span>
+        <button class="btn secondary" id="exportBtn" title="Export backup JSON">
+          ⤓ Export
         </button>
-
-        <section class="list-section" style="margin-top: 24px;">
-            <div class="listHeader">
-                <h2>Your Sessions</h2>
-                <button id="clearSessionsBtn" class="btn text-danger">Clear All</button>
-            </div>
-            <ul id="sessionList" class="list" aria-live="polite"></ul>
-            <div id="emptySessions" class="empty-state">
-                <div class="empty-icon">📁</div>
-                <p>No sessions yet.<br>Create a folder (e.g. "Leg Day") above.</p>
-            </div>
-        </section>
-    </div>
-
-    <div id="detailView" class="hidden">
-        <div class="back-nav" id="backBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            <span>Back to Sessions</span>
-        </div>
-
-        <div class="header" style="padding-top: 0; margin-bottom: 20px;">
-            <div class="header-text">
-                <h1 id="detailTitle">Session Name</h1>
-                <span class="folder-tag">Editing Exercises</span>
-            </div>
-        </div>
-
-        <section class="card stats-card">
-            <div class="progress-header">
-                <span>Session Progress</span>
-                <span id="detailProgressText">0%</span>
-            </div>
-            <div class="progress-bar-bg">
-                <div id="detailProgressBar" class="progress-bar-fill"></div>
-            </div>
-        </section>
-
-        <button id="openAddExerciseModalBtn" class="add-trigger-box" style="margin-top: 24px;">
-            <span class="plus-icon">+</span>
-            <span>Add Exercises (Paste List Here)</span>
+        <button class="btn secondary" id="importBtn" title="Import backup JSON">
+          ⤒ Import
         </button>
+      </div>
+    </header>
 
-        <section class="list-section" style="margin-top: 24px;">
-            <div class="listHeader">
-                <h2>Exercises</h2>
-            </div>
-            <ul id="exerciseList" class="list" aria-live="polite"></ul>
-            <div id="emptyExercises" class="empty-state">
-                <div class="empty-icon">📝</div>
-                <p>Empty session.<br>Paste your workout list above!</p>
-            </div>
-        </section>
-    </div>
+    <section class="card" aria-label="Overall completion">
+      <div class="progress-header">
+        <span>Total Completion</span>
+        <span id="homeProgressText">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="homeProgressBar" class="progress-bar-fill"></div>
+      </div>
 
-    <div id="nameModal" class="modal-overlay hidden">
-        <div class="modal">
-            <h3>Your Profile Name</h3>
-            <input id="userNameInput" class="input" placeholder="e.g., Poom" autocomplete="name" />
-            <div class="modal-actions">
-                <button id="closeNameModal" class="btn ghost">Cancel</button>
-                <button id="saveNameBtn" class="btn primary">Save</button>
-            </div>
+      <div class="toolbar">
+        <div class="left" style="flex:1; min-width:220px;">
+          <input class="input" id="sessionSearch" placeholder="Search sessions… (press /)" autocomplete="off" />
         </div>
-    </div>
-
-    <div id="addSessionModal" class="modal-overlay hidden">
-        <div class="modal">
-            <h3>New Session Name</h3>
-            <input id="newSessionInput" class="input" placeholder="e.g., Leg Day, Mikasa" />
-            <div class="modal-actions">
-                <button id="closeAddSessionModal" class="btn ghost">Cancel</button>
-                <button id="confirmAddSessionBtn" class="btn primary">Create Folder</button>
-            </div>
+        <div class="right">
+          <div class="chips" aria-label="Session filter">
+            <button class="chip active" data-filter="all" id="sessionFilterAll">All</button>
+            <button class="chip" data-filter="active" id="sessionFilterActive">Active</button>
+            <button class="chip" data-filter="done" id="sessionFilterDone">Done</button>
+          </div>
+          <button class="btn danger" id="clearAllBtn" title="Clear all data">Reset</button>
         </div>
+      </div>
+    </section>
+
+    <button id="openAddSessionModalBtn" class="add-trigger" style="margin-top:6px;">
+      <span class="plus" aria-hidden="true">+</span>
+      <span>Create New Session</span>
+      <span style="margin-left:auto;color:var(--muted);font-weight:600;font-size:12px;">(N)</span>
+    </button>
+
+    <section class="card">
+      <div class="listHeader">
+        <h2>Your Sessions</h2>
+        <span class="meta" id="sessionCountLabel">0 sessions</span>
+      </div>
+
+      <ul id="sessionList" class="list" aria-live="polite"></ul>
+
+      <div id="emptySessions" class="empty">
+        <div class="emoji" aria-hidden="true">📁</div>
+        <div>No sessions yet.</div>
+        <div style="margin-top:6px;">Try “Leg Day”, “Push”, “Pull”, “Full Body”.</div>
+      </div>
+    </section>
+  </section>
+
+  <!-- DETAIL VIEW -->
+  <section id="detailView" class="hidden">
+    <div class="back" id="backBtn" role="button" tabindex="0" aria-label="Back to sessions">
+      ← Back to Sessions
     </div>
 
-    <div id="addExerciseModal" class="modal-overlay hidden">
-        <div class="modal">
-            <h3>Paste Your Exercises</h3>
-            <p style="font-size: 13px; color: #a1a1aa; margin-top: 0;">Paste a list. Each new line becomes a separate item.</p>
-            <textarea id="newExerciseInput" class="input" placeholder="e.g.&#10;Push Ups 3x10&#10;Squats 3x10&#10;Plank 30s"></textarea>
-            <div class="modal-actions">
-                <button id="closeAddExerciseModal" class="btn ghost">Cancel</button>
-                <button id="confirmAddExerciseBtn" class="btn primary">Add Exercises</button>
-            </div>
+    <section class="card">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+        <div>
+          <h2 id="detailTitle" style="margin:0; font-size:22px; letter-spacing:-.02em;">Session</h2>
+          <div class="tag">Editing Exercises</div>
         </div>
-    </div>
 
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="btn secondary" id="renameSessionBtn" title="Rename session">Rename</button>
+          <button class="btn secondary" id="duplicateSessionBtn" title="Duplicate session">Duplicate</button>
+          <button class="btn danger" id="deleteSessionBtn" title="Delete session">Delete</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="progress-header">
+          <span>Session Progress</span>
+          <span id="detailProgressText">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="detailProgressBar" class="progress-bar-fill"></div>
+        </div>
+
+        <div class="toolbar">
+          <div class="left" style="flex:1; min-width:220px;">
+            <input class="input" id="exerciseSearch" placeholder="Search exercises…" autocomplete="off" />
+          </div>
+          <div class="right">
+            <div class="chips" aria-label="Exercise filter">
+              <button class="chip active" data-exfilter="all" id="exFilterAll">All</button>
+              <button class="chip" data-exfilter="active" id="exFilterActive">Active</button>
+              <button class="chip" data-exfilter="done" id="exFilterDone">Done</button>
+            </div>
+            <button class="btn secondary" id="markAllDoneBtn" title="Mark all exercises done">✓ All</button>
+            <button class="btn secondary" id="clearDoneBtn" title="Remove completed exercises">Clear Done</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button id="openAddExerciseModalBtn" class="add-trigger" style="margin-top:6px;">
+      <span class="plus" aria-hidden="true">+</span>
+      <span>Add Exercises (Paste List)</span>
+      <span style="margin-left:auto;color:var(--muted);font-weight:600;font-size:12px;">(E)</span>
+    </button>
+
+    <section class="card">
+      <div class="listHeader">
+        <h2>Exercises</h2>
+        <span class="meta" id="exerciseCountLabel">0 items</span>
+      </div>
+
+      <ul id="exerciseList" class="list" aria-live="polite"></ul>
+
+      <div id="emptyExercises" class="empty">
+        <div class="emoji" aria-hidden="true">📝</div>
+        <div>Empty session.</div>
+        <div style="margin-top:6px;">Paste a workout list to get started.</div>
+      </div>
+    </section>
+  </section>
+
+  <!-- Modals -->
+  <div id="nameModal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
+    <div class="modal">
+      <h3 id="nameModalTitle">Your Profile Name</h3>
+      <p>This name is saved locally on your device.</p>
+      <input id="userNameInput" class="input" placeholder="e.g., Poom" autocomplete="name" />
+      <div class="modal-actions">
+        <button class="btn ghost" data-close="nameModal">Cancel</button>
+        <button class="btn primary" id="saveNameBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="addSessionModal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="addSessionTitle">
+    <div class="modal">
+      <h3 id="addSessionTitle">New Session</h3>
+      <p>Example: “Leg Day”, “Push”, “Pull”, “Abs”, “Cardio”.</p>
+      <input id="newSessionInput" class="input" placeholder="Session name" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn ghost" data-close="addSessionModal">Cancel</button>
+        <button class="btn primary" id="confirmAddSessionBtn">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="addExerciseModal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="addExerciseTitle">
+    <div class="modal" style="max-width:520px;">
+      <h3 id="addExerciseTitle">Paste Exercises</h3>
+      <p>Each new line becomes an item. Bullets and numbering are cleaned automatically.</p>
+      <textarea id="newExerciseInput" class="input" placeholder="Push Ups 3x10&#10;Squats 3x10&#10;Plank 30s"></textarea>
+      <div class="modal-actions">
+        <button class="btn ghost" data-close="addExerciseModal">Cancel</button>
+        <button class="btn primary" id="confirmAddExerciseBtn">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal">
+      <h3 id="confirmTitle">Confirm</h3>
+      <p id="confirmText">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="btn ghost" id="confirmCancelBtn">Cancel</button>
+        <button class="btn danger" id="confirmOkBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="importFile" type="file" accept="application/json" class="hidden" />
 </main>
+
+<div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
 <script>
-    const STORAGE_KEY = "fit_track_v5_smart_paste";
+(() => {
+  const STORAGE_KEY = "fittrack_v7_consumer";
+  const $ = (id) => document.getElementById(id);
 
-    // Global State
-    let state = {
-        name: "Athlete",
-        activeSessionId: null,
-        sessions: []
+  // --- Elements ---
+  const els = {
+    homeView: $("homeView"),
+    detailView: $("detailView"),
+    helloName: $("helloName"),
+
+    // Progress
+    homeProgressBar: $("homeProgressBar"),
+    homeProgressText: $("homeProgressText"),
+    detailProgressBar: $("detailProgressBar"),
+    detailProgressText: $("detailProgressText"),
+
+    // Lists
+    sessionList: $("sessionList"),
+    exerciseList: $("exerciseList"),
+    emptySessions: $("emptySessions"),
+    emptyExercises: $("emptyExercises"),
+    sessionCountLabel: $("sessionCountLabel"),
+    exerciseCountLabel: $("exerciseCountLabel"),
+
+    // Search + filters
+    sessionSearch: $("sessionSearch"),
+    exerciseSearch: $("exerciseSearch"),
+    sessionFilterAll: $("sessionFilterAll"),
+    sessionFilterActive: $("sessionFilterActive"),
+    sessionFilterDone: $("sessionFilterDone"),
+    exFilterAll: $("exFilterAll"),
+    exFilterActive: $("exFilterActive"),
+    exFilterDone: $("exFilterDone"),
+
+    // Buttons
+    editNameBtn: $("editNameBtn"),
+    saveNameBtn: $("saveNameBtn"),
+    openAddSessionModalBtn: $("openAddSessionModalBtn"),
+    confirmAddSessionBtn: $("confirmAddSessionBtn"),
+    openAddExerciseModalBtn: $("openAddExerciseModalBtn"),
+    confirmAddExerciseBtn: $("confirmAddExerciseBtn"),
+    backBtn: $("backBtn"),
+
+    renameSessionBtn: $("renameSessionBtn"),
+    duplicateSessionBtn: $("duplicateSessionBtn"),
+    deleteSessionBtn: $("deleteSessionBtn"),
+    markAllDoneBtn: $("markAllDoneBtn"),
+    clearDoneBtn: $("clearDoneBtn"),
+
+    exportBtn: $("exportBtn"),
+    importBtn: $("importBtn"),
+    importFile: $("importFile"),
+    clearAllBtn: $("clearAllBtn"),
+
+    // Detail title
+    detailTitle: $("detailTitle"),
+
+    // Modals
+    nameModal: $("nameModal"),
+    addSessionModal: $("addSessionModal"),
+    addExerciseModal: $("addExerciseModal"),
+    confirmModal: $("confirmModal"),
+    userNameInput: $("userNameInput"),
+    newSessionInput: $("newSessionInput"),
+    newExerciseInput: $("newExerciseInput"),
+    confirmText: $("confirmText"),
+    confirmCancelBtn: $("confirmCancelBtn"),
+    confirmOkBtn: $("confirmOkBtn"),
+
+    // Toasts
+    toasts: $("toasts"),
+  };
+
+  // --- State ---
+  let state = {
+    name: "Athlete",
+    activeSessionId: null,
+    sessions: [],
+    ui: {
+      sessionFilter: "all",
+      sessionQuery: "",
+      exFilter: "all",
+      exQuery: ""
+    }
+  };
+
+  let confirmAction = null;
+  let undoStack = null; // { label, undoFn }
+
+  // --- Utils ---
+  function uid() {
+    if (crypto?.randomUUID) return crypto.randomUUID();
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+
+  function safeGet(key) {
+    try { return localStorage.getItem(key); } catch { return null; }
+  }
+  function safeSet(key, val) {
+    try { localStorage.setItem(key, val); } catch {}
+  }
+
+  function loadState() {
+    const raw = safeGet(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      state.name = parsed.name || "Athlete";
+      state.sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+      state.activeSessionId = parsed.activeSessionId || null;
+      state.ui = Object.assign(state.ui, parsed.ui || {});
+    } catch {}
+  }
+
+  function saveState() {
+    const payload = {
+      name: state.name,
+      sessions: state.sessions,
+      activeSessionId: state.activeSessionId,
+      ui: state.ui,
+      updatedAt: new Date().toISOString()
     };
+    safeSet(STORAGE_KEY, JSON.stringify(payload));
+  }
 
-    const els = {
-        // Views
-        homeView: document.getElementById("homeView"),
-        detailView: document.getElementById("detailView"),
-        backBtn: document.getElementById("backBtn"),
+  function clampPct(n) {
+    n = Number.isFinite(n) ? n : 0;
+    return Math.max(0, Math.min(100, n));
+  }
 
-        // Home Elements
-        helloName: document.getElementById("helloName"),
-        sessionList: document.getElementById("sessionList"),
-        emptySessions: document.getElementById("emptySessions"),
-        homeProgressBar: document.getElementById("homeProgressBar"),
-        homeProgressText: document.getElementById("homeProgressText"),
-        clearSessionsBtn: document.getElementById("clearSessionsBtn"),
+  function sessionStats(session) {
+    const ex = Array.isArray(session.exercises) ? session.exercises : [];
+    const total = ex.length;
+    const done = ex.filter(e => e.done).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    return { total, done, pct };
+  }
 
-        // Detail Elements
-        detailTitle: document.getElementById("detailTitle"),
-        exerciseList: document.getElementById("exerciseList"),
-        emptyExercises: document.getElementById("emptyExercises"),
-        detailProgressBar: document.getElementById("detailProgressBar"),
-        detailProgressText: document.getElementById("detailProgressText"),
+  function overallSessionsCompletion() {
+    const total = state.sessions.length;
+    const done = state.sessions.filter(s => s.done).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    return { total, done, pct };
+  }
 
-        // Modals & Inputs
-        nameModal: document.getElementById("nameModal"),
-        userNameInput: document.getElementById("userNameInput"),
-        editNameBtn: document.getElementById("editNameBtn"),
-        saveNameBtn: document.getElementById("saveNameBtn"),
-        closeNameModal: document.getElementById("closeNameModal"),
+  function setChipGroup(group, activeId) {
+    const ids = group === "session"
+      ? ["sessionFilterAll","sessionFilterActive","sessionFilterDone"]
+      : ["exFilterAll","exFilterActive","exFilterDone"];
+    ids.forEach(id => $(id).classList.remove("active"));
+    $(activeId).classList.add("active");
+  }
 
-        addSessionModal: document.getElementById("addSessionModal"),
-        openAddSessionModalBtn: document.getElementById("openAddSessionModalBtn"),
-        newSessionInput: document.getElementById("newSessionInput"),
-        closeAddSessionModal: document.getElementById("closeAddSessionModal"),
-        confirmAddSessionBtn: document.getElementById("confirmAddSessionBtn"),
+  function openModal(modalEl) {
+    modalEl.classList.remove("hidden");
+    // focus first input/textarea/button
+    const focusable = modalEl.querySelector("input, textarea, button");
+    if (focusable) setTimeout(() => focusable.focus(), 0);
+  }
+  function closeModal(modalEl) {
+    modalEl.classList.add("hidden");
+  }
+  function closeAllModals() {
+    [els.nameModal, els.addSessionModal, els.addExerciseModal, els.confirmModal].forEach(closeModal);
+    confirmAction = null;
+  }
 
-        addExerciseModal: document.getElementById("addExerciseModal"),
-        openAddExerciseModalBtn: document.getElementById("openAddExerciseModalBtn"),
-        newExerciseInput: document.getElementById("newExerciseInput"), // This is now a TEXTAREA
-        closeAddExerciseModal: document.getElementById("closeAddExerciseModal"),
-        confirmAddExerciseBtn: document.getElementById("confirmAddExerciseBtn"),
-    };
+  function showConfirm({ text, okText="Delete", danger=true, onOk }) {
+    els.confirmText.textContent = text;
+    els.confirmOkBtn.textContent = okText;
+    els.confirmOkBtn.className = "btn " + (danger ? "danger" : "primary");
+    confirmAction = onOk;
+    openModal(els.confirmModal);
+  }
 
-    function uid() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
+  function toast(message, opts={}) {
+    const { actionText, onAction, timeout=4200 } = opts;
 
-    function loadState() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                return {
-                    name: parsed.name || "Athlete",
-                    activeSessionId: null,
-                    sessions: Array.isArray(parsed.sessions) ? parsed.sessions : []
-                };
-            }
-        } catch(e) { console.error(e); }
-        return { name: "Athlete", activeSessionId: null, sessions: [] };
-    }
+    const t = document.createElement("div");
+    t.className = "toast";
 
-    function saveState() {
-        const dataToSave = {
-            name: state.name,
-            sessions: state.sessions
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-    }
+    const msg = document.createElement("div");
+    msg.className = "msg";
+    msg.textContent = message;
 
-    // --- Render Logic ---
+    const right = document.createElement("div");
+    right.className = "toast-actions";
 
-    function render() {
-        els.helloName.textContent = state.name;
-
-        if (state.activeSessionId) {
-            renderDetailView();
-        } else {
-            renderHomeView();
+    if (actionText && typeof onAction === "function") {
+      const a = document.createElement("button");
+      a.className = "btn secondary";
+      a.style.padding = "10px 12px";
+      a.textContent = actionText;
+      a.onclick = () => {
+        try { onAction(); } finally {
+          t.remove();
         }
+      };
+      right.appendChild(a);
     }
 
-    function renderHomeView() {
-        els.homeView.classList.remove("hidden");
-        els.detailView.classList.add("hidden");
+    const x = document.createElement("button");
+    x.className = "btn ghost";
+    x.style.padding = "10px 12px";
+    x.textContent = "×";
+    x.onclick = () => t.remove();
+    right.appendChild(x);
 
-        const totalSessions = state.sessions.length;
-        const completedSessions = state.sessions.filter(s => s.done).length;
-        const pct = totalSessions ? Math.round((completedSessions / totalSessions) * 100) : 0;
+    t.append(msg, right);
+    els.toasts.appendChild(t);
 
-        els.homeProgressBar.style.width = `${pct}%`;
-        els.homeProgressText.textContent = `${pct}%`;
-        els.homeProgressText.style.color = pct === 100 ? "var(--success)" : "var(--text-muted)";
+    if (timeout) {
+      setTimeout(() => { if (t.isConnected) t.remove(); }, timeout);
+    }
+  }
 
-        els.sessionList.innerHTML = "";
-        els.emptySessions.classList.toggle("hidden", state.sessions.length > 0);
-        els.clearSessionsBtn.style.visibility = state.sessions.length ? "visible" : "hidden";
+  // Clean pasted lines:
+  // - remove bullets: "- ", "* ", "• "
+  // - remove numbering: "1. ", "1) "
+  // - trim
+  function smartParseList(raw) {
+    if (!raw) return [];
+    let text = raw.replace(/\r/g, "").trim();
+    if (!text) return [];
 
-        state.sessions.forEach(session => {
-            const li = document.createElement("li");
-            li.className = `item ${session.done ? "done" : ""}`;
-
-            const checkContainer = document.createElement("div");
-            checkContainer.className = "check-container";
-            checkContainer.onclick = (e) => e.stopPropagation();
-
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "check";
-            checkbox.checked = session.done;
-            checkbox.onchange = () => {
-                session.done = checkbox.checked;
-                saveState();
-                render();
-            };
-
-            const customCheck = document.createElement("div");
-            customCheck.className = "custom-check";
-            checkContainer.append(checkbox, customCheck);
-
-            const contentDiv = document.createElement("div");
-            contentDiv.className = "item-content";
-            contentDiv.onclick = () => {
-                state.activeSessionId = session.id;
-                render();
-            };
-
-            const nameSpan = document.createElement("span");
-            nameSpan.className = "name";
-            nameSpan.textContent = session.text;
-
-            const subCount = document.createElement("span");
-            subCount.className = "sub-count";
-            const exCount = session.exercises ? session.exercises.length : 0;
-            subCount.textContent = `${exCount} exercise${exCount !== 1 ? 's' : ''}`;
-
-            contentDiv.append(nameSpan, subCount);
-
-            const actionsDiv = document.createElement("div");
-            actionsDiv.className = "actions";
-            actionsDiv.onclick = (e) => e.stopPropagation();
-
-            const delBtn = document.createElement("button");
-            delBtn.className = "action-btn delete";
-            delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
-            delBtn.onclick = () => {
-                if(confirm(`Delete "${session.text}"?`)) {
-                    state.sessions = state.sessions.filter(s => s.id !== session.id);
-                    saveState();
-                    render();
-                }
-            };
-
-            actionsDiv.append(delBtn);
-            li.append(checkContainer, contentDiv, actionsDiv);
-            els.sessionList.appendChild(li);
-        });
+    let lines = text.split("\n");
+    // If user pasted a single line with semicolons, split that too
+    if (lines.length === 1 && /;/.test(lines[0])) {
+      lines = lines[0].split(";");
     }
 
-    function renderDetailView() {
-        const session = state.sessions.find(s => s.id === state.activeSessionId);
-        if (!session) {
-            state.activeSessionId = null;
-            render();
-            return;
-        }
+    const out = [];
+    const seen = new Set();
 
-        els.homeView.classList.add("hidden");
-        els.detailView.classList.remove("hidden");
-        els.detailTitle.textContent = session.text;
+    for (let line of lines) {
+      let s = (line || "").trim();
+      if (!s) continue;
+      s = s.replace(/^[-*•]\s+/, "");           // bullets
+      s = s.replace(/^\d+[\.\)]\s+/, "");       // numbering
+      s = s.replace(/\s{2,}/g, " ").trim();     // normalize spaces
+      if (!s) continue;
 
-        const exercises = session.exercises || [];
+      const key = s.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(s);
+    }
+    return out;
+  }
 
-        const total = exercises.length;
-        const done = exercises.filter(e => e.done).length;
-        const pct = total ? Math.round((done / total) * 100) : 0;
+  // --- Rendering ---
+  function setView(view) {
+    const isDetail = view === "detail";
+    els.homeView.classList.toggle("hidden", isDetail);
+    els.detailView.classList.toggle("hidden", !isDetail);
+  }
 
-        els.detailProgressBar.style.width = `${pct}%`;
-        els.detailProgressText.textContent = `${pct}%`;
-        els.detailProgressText.style.color = pct === 100 ? "var(--success)" : "var(--text-muted)";
+  function getActiveSession() {
+    return state.sessions.find(s => s.id === state.activeSessionId) || null;
+  }
 
-        els.exerciseList.innerHTML = "";
-        els.emptyExercises.classList.toggle("hidden", exercises.length > 0);
+  function filteredSessions() {
+    const q = (state.ui.sessionQuery || "").toLowerCase().trim();
+    const f = state.ui.sessionFilter;
 
-        exercises.forEach(ex => {
-            const li = document.createElement("li");
-            li.className = `item ${ex.done ? "done" : ""}`;
+    return state.sessions.filter(s => {
+      const matchesQuery = !q || (s.text || "").toLowerCase().includes(q);
+      const matchesFilter =
+        f === "all" ? true :
+        f === "active" ? !s.done :
+        f === "done" ? !!s.done :
+        true;
+      return matchesQuery && matchesFilter;
+    });
+  }
 
-            const checkContainer = document.createElement("div");
-            checkContainer.className = "check-container";
+  function filteredExercises(session) {
+    const ex = Array.isArray(session.exercises) ? session.exercises : [];
+    const q = (state.ui.exQuery || "").toLowerCase().trim();
+    const f = state.ui.exFilter;
 
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "check";
-            checkbox.checked = ex.done;
-            checkbox.onchange = () => {
-                ex.done = checkbox.checked;
-                saveState();
-                render();
-            };
+    return ex.filter(e => {
+      const matchesQuery = !q || (e.text || "").toLowerCase().includes(q);
+      const matchesFilter =
+        f === "all" ? true :
+        f === "active" ? !e.done :
+        f === "done" ? !!e.done :
+        true;
+      return matchesQuery && matchesFilter;
+    });
+  }
 
-            const customCheck = document.createElement("div");
-            customCheck.className = "custom-check";
-            checkContainer.append(checkbox, customCheck);
+  function renderHome() {
+    setView("home");
 
-            const contentDiv = document.createElement("div");
-            contentDiv.className = "item-content";
+    els.helloName.textContent = state.name;
+    els.sessionSearch.value = state.ui.sessionQuery || "";
 
-            const nameSpan = document.createElement("span");
-            nameSpan.className = "name";
-            nameSpan.textContent = ex.text;
-            contentDiv.appendChild(nameSpan);
+    const overall = overallSessionsCompletion();
+    const pct = clampPct(overall.pct);
 
-            const actionsDiv = document.createElement("div");
-            actionsDiv.className = "actions";
+    els.homeProgressBar.style.width = pct + "%";
+    els.homeProgressText.textContent = pct + "%";
+    els.homeProgressText.style.color = (pct === 100 && overall.total > 0) ? "var(--success)" : "var(--muted)";
 
-            const editBtn = document.createElement("button");
-            editBtn.className = "action-btn";
-            editBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
-            editBtn.onclick = () => {
-                const input = document.createElement("input");
-                input.className = "edit-input";
-                input.value = ex.text;
-                contentDiv.innerHTML = "";
-                contentDiv.appendChild(input);
-                input.focus();
-                actionsDiv.style.display = "none";
+    // Count label
+    els.sessionCountLabel.textContent = `${state.sessions.length} session${state.sessions.length === 1 ? "" : "s"}`;
 
-                const commit = () => {
-                    if(input.value.trim()) ex.text = input.value.trim();
-                    saveState();
-                    render();
-                };
-                input.onblur = commit;
-                input.onkeydown = (e) => { if(e.key==="Enter") commit(); };
-            };
+    // List
+    const list = filteredSessions();
+    els.sessionList.innerHTML = "";
+    els.emptySessions.classList.toggle("hidden", state.sessions.length > 0);
 
-            const delBtn = document.createElement("button");
-            delBtn.className = "action-btn delete";
-            delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
-            delBtn.onclick = () => {
-                if(confirm("Delete this exercise?")) {
-                    session.exercises = session.exercises.filter(e => e.id !== ex.id);
-                    saveState();
-                    render();
-                }
-            };
-
-            actionsDiv.append(editBtn, delBtn);
-            li.append(checkContainer, contentDiv, actionsDiv);
-            els.exerciseList.appendChild(li);
-        });
+    if (list.length === 0 && state.sessions.length > 0) {
+      // user has sessions but filter/search hides them
+      const hint = document.createElement("div");
+      hint.className = "empty";
+      hint.innerHTML = `<div class="emoji" aria-hidden="true">🔎</div><div>No matches.</div><div style="margin-top:6px;">Try clearing search / filters.</div>`;
+      els.sessionList.appendChild(hint);
+      return;
     }
 
-    // --- Actions ---
+    const frag = document.createDocumentFragment();
 
-    // Back
-    els.backBtn.addEventListener("click", () => {
-        state.activeSessionId = null;
+    list.forEach(session => {
+      const li = document.createElement("li");
+      li.className = "item" + (session.done ? " done" : "");
+      li.setAttribute("role", "button");
+      li.tabIndex = 0;
+
+      // checkbox
+      const cwrap = document.createElement("div");
+      cwrap.className = "check-wrap";
+      cwrap.onclick = (e) => e.stopPropagation();
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "check";
+      cb.checked = !!session.done;
+      cb.setAttribute("aria-label", "Mark session done");
+
+      const cc = document.createElement("div");
+      cc.className = "custom-check";
+      cb.onchange = () => {
+        session.done = cb.checked;
+        saveState();
         render();
+      };
+      cwrap.append(cb, cc);
+
+      // content
+      const content = document.createElement("div");
+      content.className = "item-content";
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = session.text || "Untitled";
+
+      const stats = sessionStats(session);
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = stats.total
+        ? `${stats.done}/${stats.total} done`
+        : `0 exercises`;
+
+      const mini = document.createElement("div");
+      mini.className = "mini-bar";
+      const fill = document.createElement("div");
+      fill.className = "mini-fill";
+      fill.style.width = clampPct(stats.pct) + "%";
+      mini.appendChild(fill);
+
+      content.append(name, meta, mini);
+
+      // actions
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      actions.onclick = (e) => e.stopPropagation();
+
+      const rename = document.createElement("button");
+      rename.className = "action-btn";
+      rename.title = "Rename";
+      rename.textContent = "✎";
+      rename.onclick = () => renameSession(session.id);
+
+      const dup = document.createElement("button");
+      dup.className = "action-btn warn";
+      dup.title = "Duplicate";
+      dup.textContent = "⎘";
+      dup.onclick = () => duplicateSession(session.id);
+
+      const del = document.createElement("button");
+      del.className = "action-btn delete";
+      del.title = "Delete";
+      del.textContent = "🗑";
+      del.onclick = () => deleteSession(session.id);
+
+      actions.append(rename, dup, del);
+
+      // open detail
+      li.onclick = () => {
+        state.activeSessionId = session.id;
+        saveState();
+        render();
+      };
+      li.onkeydown = (e) => {
+        if (e.key === "Enter") li.click();
+      };
+
+      li.append(cwrap, content, actions);
+      frag.appendChild(li);
     });
 
-    // Add Session
-    const toggleSessionModal = (show) => {
-        els.addSessionModal.classList.toggle("hidden", !show);
-        if(show) { els.newSessionInput.value = ""; els.newSessionInput.focus(); }
-    };
-    els.openAddSessionModalBtn.onclick = () => toggleSessionModal(true);
-    els.closeAddSessionModal.onclick = () => toggleSessionModal(false);
+    els.sessionList.appendChild(frag);
+  }
 
-    els.confirmAddSessionBtn.onclick = () => {
-        const text = els.newSessionInput.value.trim();
-        if(text) {
-            state.sessions.unshift({ id: uid(), text, done: false, exercises: [] });
-            saveState();
-            render();
-            toggleSessionModal(false);
-        }
-    };
-    els.newSessionInput.onkeydown = (e) => {
-        if(e.key === "Enter") els.confirmAddSessionBtn.click();
-        if(e.key === "Escape") toggleSessionModal(false);
-    };
+  function renderDetail() {
+    const session = getActiveSession();
+    if (!session) {
+      state.activeSessionId = null;
+      saveState();
+      renderHome();
+      return;
+    }
 
-    // Add Exercise (SMART PASTE LOGIC HERE)
-    const toggleExerciseModal = (show) => {
-        els.addExerciseModal.classList.toggle("hidden", !show);
-        if(show) { els.newExerciseInput.value = ""; els.newExerciseInput.focus(); }
-    };
-    els.openAddExerciseModalBtn.onclick = () => toggleExerciseModal(true);
-    els.closeAddExerciseModal.onclick = () => toggleExerciseModal(false);
+    setView("detail");
+    els.detailTitle.textContent = session.text || "Session";
 
-    els.confirmAddExerciseBtn.onclick = () => {
-        const rawText = els.newExerciseInput.value.trim();
-        const session = state.sessions.find(s => s.id === state.activeSessionId);
+    els.exerciseSearch.value = state.ui.exQuery || "";
 
-        if(rawText && session) {
-            if(!session.exercises) session.exercises = [];
+    const ex = Array.isArray(session.exercises) ? session.exercises : [];
+    const done = ex.filter(e => e.done).length;
+    const total = ex.length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
 
-            // --- THE FIX: Split by new line ---
-            const lines = rawText.split(/\r?\n/);
+    els.detailProgressBar.style.width = clampPct(pct) + "%";
+    els.detailProgressText.textContent = clampPct(pct) + "%";
+    els.detailProgressText.style.color = (pct === 100 && total > 0) ? "var(--success)" : "var(--muted)";
 
-            lines.forEach(line => {
-                const cleanLine = line.trim();
-                // Ignore empty lines
-                if (cleanLine) {
-                    session.exercises.push({ id: uid(), text: cleanLine, done: false });
-                }
-            });
+    els.exerciseCountLabel.textContent = `${total} item${total === 1 ? "" : "s"}`;
 
-            saveState();
-            render();
-            toggleExerciseModal(false);
-        }
-    };
+    const list = filteredExercises(session);
+    els.exerciseList.innerHTML = "";
+    els.emptyExercises.classList.toggle("hidden", total > 0);
 
-    // Name Modal
-    const toggleNameModal = (show) => {
-        els.nameModal.classList.toggle("hidden", !show);
-        if(show) els.userNameInput.focus();
-    };
-    els.editNameBtn.onclick = () => { els.userNameInput.value = state.name; toggleNameModal(true); };
-    els.closeNameModal.onclick = () => toggleNameModal(false);
-    els.saveNameBtn.onclick = () => {
-        const val = els.userNameInput.value.trim();
-        if(val) { state.name = val; saveState(); render(); }
-        toggleNameModal(false);
-    };
+    if (list.length === 0 && total > 0) {
+      const hint = document.createElement("div");
+      hint.className = "empty";
+      hint.innerHTML = `<div class="emoji" aria-hidden="true">🔎</div><div>No matches.</div><div style="margin-top:6px;">Try clearing search / filters.</div>`;
+      els.exerciseList.appendChild(hint);
+      return;
+    }
 
-    // Clear All
-    els.clearSessionsBtn.onclick = () => {
-        if(confirm("Delete ALL data?")) { state.sessions = []; saveState(); render(); }
-    };
+    const frag = document.createDocumentFragment();
 
-    // Init
-    state = loadState();
+    list.forEach(exItem => {
+      const li = document.createElement("li");
+      li.className = "item" + (exItem.done ? " done" : "");
+
+      // checkbox
+      const cwrap = document.createElement("div");
+      cwrap.className = "check-wrap";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "check";
+      cb.checked = !!exItem.done;
+      cb.setAttribute("aria-label", "Mark exercise done");
+
+      const cc = document.createElement("div");
+      cc.className = "custom-check";
+
+      cb.onchange = () => {
+        exItem.done = cb.checked;
+        // if all exercises done, optionally mark session done (nice UX)
+        session.done = total > 0 && session.exercises.every(x => x.done);
+        saveState();
+        render();
+      };
+
+      cwrap.append(cb, cc);
+
+      // content
+      const content = document.createElement("div");
+      content.className = "item-content";
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = exItem.text || "Exercise";
+
+      content.appendChild(name);
+
+      // actions
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const edit = document.createElement("button");
+      edit.className = "action-btn";
+      edit.title = "Edit";
+      edit.textContent = "✎";
+      edit.onclick = () => editExerciseInline(session, exItem, content, actions);
+
+      const del = document.createElement("button");
+      del.className = "action-btn delete";
+      del.title = "Delete";
+      del.textContent = "🗑";
+      del.onclick = () => deleteExercise(session, exItem.id);
+
+      actions.append(edit, del);
+
+      li.append(cwrap, content, actions);
+      frag.appendChild(li);
+    });
+
+    els.exerciseList.appendChild(frag);
+  }
+
+  function render() {
+    els.helloName.textContent = state.name;
+
+    if (state.activeSessionId) renderDetail();
+    else renderHome();
+  }
+
+  // --- Actions ---
+  function createSession(name) {
+    const text = (name || "").trim();
+    if (!text) return;
+
+    state.sessions.unshift({ id: uid(), text, done: false, exercises: [] });
+    saveState();
     render();
+    toast(`Created session: ${text}`);
+  }
 
+  function renameSession(sessionId) {
+    const s = state.sessions.find(x => x.id === sessionId);
+    if (!s) return;
+
+    // reuse addSessionModal UI for rename
+    els.newSessionInput.value = s.text || "";
+    openModal(els.addSessionModal);
+
+    const oldHandler = els.confirmAddSessionBtn.onclick;
+    els.confirmAddSessionBtn.onclick = () => {
+      const val = els.newSessionInput.value.trim();
+      if (val) {
+        s.text = val;
+        saveState();
+        render();
+        toast("Session renamed");
+        closeModal(els.addSessionModal);
+        els.confirmAddSessionBtn.onclick = oldHandler;
+      }
+    };
+  }
+
+  function duplicateSession(sessionId) {
+    const s = state.sessions.find(x => x.id === sessionId);
+    if (!s) return;
+
+    const copy = JSON.parse(JSON.stringify(s));
+    copy.id = uid();
+    copy.text = (s.text || "Session") + " (Copy)";
+    if (Array.isArray(copy.exercises)) {
+      copy.exercises = copy.exercises.map(e => ({...e, id: uid()}));
+    } else {
+      copy.exercises = [];
+    }
+    state.sessions.unshift(copy);
+    saveState();
+    render();
+    toast("Session duplicated");
+  }
+
+  function deleteSession(sessionId) {
+    const s = state.sessions.find(x => x.id === sessionId);
+    if (!s) return;
+
+    showConfirm({
+      text: `Delete session "${s.text}"? This removes its exercises too.`,
+      okText: "Delete",
+      danger: true,
+      onOk: () => {
+        const snapshot = JSON.parse(JSON.stringify(s));
+        state.sessions = state.sessions.filter(x => x.id !== sessionId);
+        if (state.activeSessionId === sessionId) state.activeSessionId = null;
+        saveState();
+        render();
+
+        undoStack = {
+          label: "Undo delete",
+          undoFn: () => {
+            state.sessions.unshift(snapshot);
+            saveState();
+            render();
+            toast("Restored session");
+          }
+        };
+
+        toast("Session deleted", { actionText: "Undo", onAction: () => undoStack?.undoFn?.() });
+        closeModal(els.confirmModal);
+      }
+    });
+  }
+
+  function editExerciseInline(session, exItem, contentDiv, actionsDiv) {
+    const input = document.createElement("input");
+    input.className = "input";
+    input.style.padding = "12px 12px";
+    input.value = exItem.text || "";
+    contentDiv.innerHTML = "";
+    contentDiv.appendChild(input);
+    actionsDiv.style.display = "none";
+    input.focus();
+
+    const commit = () => {
+      const val = input.value.trim();
+      if (val) exItem.text = val;
+      saveState();
+      render();
+    };
+    input.onblur = commit;
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") commit();
+      if (e.key === "Escape") render();
+    };
+  }
+
+  function deleteExercise(session, exId) {
+    const ex = (session.exercises || []).find(e => e.id === exId);
+    if (!ex) return;
+
+    showConfirm({
+      text: `Delete "${ex.text}"?`,
+      okText: "Delete",
+      danger: true,
+      onOk: () => {
+        const snapshot = JSON.parse(JSON.stringify(ex));
+        session.exercises = (session.exercises || []).filter(e => e.id !== exId);
+        saveState();
+        render();
+
+        undoStack = {
+          label: "Undo delete",
+          undoFn: () => {
+            session.exercises.unshift(snapshot);
+            saveState();
+            render();
+            toast("Restored exercise");
+          }
+        };
+
+        toast("Exercise deleted", { actionText: "Undo", onAction: () => undoStack?.undoFn?.() });
+        closeModal(els.confirmModal);
+      }
+    });
+  }
+
+  function addExercisesFromPaste(rawText) {
+    const session = getActiveSession();
+    if (!session) return;
+
+    const lines = smartParseList(rawText);
+    if (!lines.length) return;
+
+    if (!Array.isArray(session.exercises)) session.exercises = [];
+
+    lines.forEach(line => {
+      session.exercises.push({ id: uid(), text: line, done: false });
+    });
+
+    // if user adds exercises, session likely not "done" anymore
+    session.done = session.exercises.length > 0 && session.exercises.every(x => x.done);
+
+    saveState();
+    render();
+    toast(`Added ${lines.length} exercise${lines.length === 1 ? "" : "s"}`);
+  }
+
+  function exportBackup() {
+    const payload = {
+      app: "FitTrack",
+      version: 7,
+      exportedAt: new Date().toISOString(),
+      data: {
+        name: state.name,
+        sessions: state.sessions
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `fittrack-backup-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Exported backup JSON");
+  }
+
+  function importBackupFromFile(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || ""));
+        const data = parsed?.data || parsed; // allow importing raw old format
+
+        const nextName = (data.name || "Athlete").toString();
+        const nextSessions = Array.isArray(data.sessions) ? data.sessions : [];
+
+        // Light validation: ensure ids exist
+        nextSessions.forEach(s => {
+          if (!s.id) s.id = uid();
+          if (!Array.isArray(s.exercises)) s.exercises = [];
+          s.exercises.forEach(e => { if (!e.id) e.id = uid(); });
+        });
+
+        state.name = nextName;
+        state.sessions = nextSessions;
+        state.activeSessionId = null;
+        saveState();
+        render();
+        toast("Imported backup");
+      } catch {
+        toast("Import failed (invalid JSON)", { timeout: 5000 });
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // --- Events ---
+  // modal close (buttons)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-close]");
+    if (!btn) return;
+    const id = btn.getAttribute("data-close");
+    const modal = $(id);
+    if (modal) closeModal(modal);
+  });
+
+  // click outside modal to close
+  [els.nameModal, els.addSessionModal, els.addExerciseModal, els.confirmModal].forEach(modal => {
+    modal.addEventListener("mousedown", (e) => {
+      if (e.target === modal) closeModal(modal);
+    });
+  });
+
+  // ESC closes
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeAllModals();
+      return;
+    }
+    // Quick shortcuts (avoid when typing)
+    const tag = (document.activeElement?.tagName || "").toLowerCase();
+    const typing = tag === "input" || tag === "textarea";
+    if (typing) return;
+
+    if (e.key === "/") {
+      e.preventDefault();
+      (state.activeSessionId ? els.exerciseSearch : els.sessionSearch).focus();
+    }
+    if (e.key.toLowerCase() === "n" && !state.activeSessionId) {
+      openModal(els.addSessionModal);
+      els.newSessionInput.value = "";
+      els.newSessionInput.focus();
+    }
+    if (e.key.toLowerCase() === "e" && state.activeSessionId) {
+      openModal(els.addExerciseModal);
+      els.newExerciseInput.value = "";
+      els.newExerciseInput.focus();
+    }
+  });
+
+  // Name
+  els.editNameBtn.onclick = () => {
+    els.userNameInput.value = state.name;
+    openModal(els.nameModal);
+  };
+  els.saveNameBtn.onclick = () => {
+    const val = els.userNameInput.value.trim();
+    if (val) {
+      state.name = val;
+      saveState();
+      render();
+      toast("Name saved");
+    }
+    closeModal(els.nameModal);
+  };
+
+  // Add Session
+  els.openAddSessionModalBtn.onclick = () => {
+    els.newSessionInput.value = "";
+    openModal(els.addSessionModal);
+  };
+  els.confirmAddSessionBtn.onclick = () => {
+    const text = els.newSessionInput.value.trim();
+    if (!text) return;
+    createSession(text);
+    closeModal(els.addSessionModal);
+  };
+  els.newSessionInput.onkeydown = (e) => {
+    if (e.key === "Enter") els.confirmAddSessionBtn.click();
+  };
+
+  // Add Exercises
+  els.openAddExerciseModalBtn.onclick = () => {
+    els.newExerciseInput.value = "";
+    openModal(els.addExerciseModal);
+  };
+  els.confirmAddExerciseBtn.onclick = () => {
+    const raw = els.newExerciseInput.value;
+    if (!raw.trim()) return;
+    addExercisesFromPaste(raw);
+    closeModal(els.addExerciseModal);
+  };
+
+  // Back
+  function goHome() {
+    state.activeSessionId = null;
+    saveState();
+    render();
+  }
+  els.backBtn.onclick = goHome;
+  els.backBtn.onkeydown = (e) => { if (e.key === "Enter") goHome(); };
+
+  // Filters
+  function setSessionFilter(filter, btnId) {
+    state.ui.sessionFilter = filter;
+    setChipGroup("session", btnId);
+    saveState();
+    renderHome();
+  }
+  els.sessionFilterAll.onclick = () => setSessionFilter("all", "sessionFilterAll");
+  els.sessionFilterActive.onclick = () => setSessionFilter("active", "sessionFilterActive");
+  els.sessionFilterDone.onclick = () => setSessionFilter("done", "sessionFilterDone");
+
+  function setExFilter(filter, btnId) {
+    state.ui.exFilter = filter;
+    setChipGroup("ex", btnId);
+    saveState();
+    renderDetail();
+  }
+  els.exFilterAll.onclick = () => setExFilter("all", "exFilterAll");
+  els.exFilterActive.onclick = () => setExFilter("active", "exFilterActive");
+  els.exFilterDone.onclick = () => setExFilter("done", "exFilterDone");
+
+  els.sessionSearch.addEventListener("input", () => {
+    state.ui.sessionQuery = els.sessionSearch.value;
+    saveState();
+    renderHome();
+  });
+  els.exerciseSearch.addEventListener("input", () => {
+    state.ui.exQuery = els.exerciseSearch.value;
+    saveState();
+    renderDetail();
+  });
+
+  // Detail actions
+  els.renameSessionBtn.onclick = () => renameSession(state.activeSessionId);
+  els.duplicateSessionBtn.onclick = () => duplicateSession(state.activeSessionId);
+  els.deleteSessionBtn.onclick = () => deleteSession(state.activeSessionId);
+
+  els.markAllDoneBtn.onclick = () => {
+    const s = getActiveSession();
+    if (!s) return;
+    if (!Array.isArray(s.exercises) || s.exercises.length === 0) return;
+    s.exercises.forEach(e => e.done = true);
+    s.done = true;
+    saveState();
+    render();
+    toast("Marked all done");
+  };
+
+  els.clearDoneBtn.onclick = () => {
+    const s = getActiveSession();
+    if (!s) return;
+    const before = (s.exercises || []).length;
+    s.exercises = (s.exercises || []).filter(e => !e.done);
+    const removed = before - s.exercises.length;
+    s.done = s.exercises.length > 0 && s.exercises.every(x => x.done);
+    saveState();
+    render();
+    if (removed) toast(`Removed ${removed} completed`);
+  };
+
+  // Confirm modal
+  els.confirmCancelBtn.onclick = () => { closeModal(els.confirmModal); confirmAction = null; };
+  els.confirmOkBtn.onclick = () => { if (typeof confirmAction === "function") confirmAction(); };
+
+  // Export / Import
+  els.exportBtn.onclick = exportBackup;
+  els.importBtn.onclick = () => els.importFile.click();
+  els.importFile.onchange = () => importBackupFromFile(els.importFile.files?.[0]);
+
+  // Reset
+  els.clearAllBtn.onclick = () => {
+    showConfirm({
+      text: "Reset ALL data on this device? (Sessions, exercises, name)",
+      okText: "Reset",
+      danger: true,
+      onOk: () => {
+        state = {
+          name: "Athlete",
+          activeSessionId: null,
+          sessions: [],
+          ui: { sessionFilter: "all", sessionQuery: "", exFilter: "all", exQuery: "" }
+        };
+        saveState();
+        render();
+        closeModal(els.confirmModal);
+        toast("Reset complete");
+      }
+    });
+  };
+
+  // Restore UI chips on load
+  function restoreChips() {
+    const sf = state.ui.sessionFilter || "all";
+    setChipGroup("session", sf === "active" ? "sessionFilterActive" : sf === "done" ? "sessionFilterDone" : "sessionFilterAll");
+
+    const ef = state.ui.exFilter || "all";
+    setChipGroup("ex", ef === "active" ? "exFilterActive" : ef === "done" ? "exFilterDone" : "exFilterAll");
+  }
+
+  // Init
+  loadState();
+  restoreChips();
+  render();
+})();
 </script>
 </body>
 </html>
