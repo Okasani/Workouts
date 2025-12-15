@@ -2,51 +2,706 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Workout Tracker</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title>FitTrack</title>
+
+    <style>
+        :root {
+            --bg: #09090b;
+            --card-bg: #18181b;
+            --card-border: #27272a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --radius: 12px;
+            --font-stack: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: var(--font-stack);
+            background-color: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px;
+        }
+
+        .wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* --- Header --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .header-text h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -0.03em;
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sub { margin: 5px 0 0; color: var(--text-muted); font-size: 14px; }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            padding: 8px 12px 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--card-border);
+        }
+
+        .greeting h3 { margin: 0; font-size: 14px; font-weight: 600; }
+        .greeting .hint { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+        /* --- Common Elements --- */
+        .input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card-border);
+            background: #27272a;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.2s;
+            font-family: var(--font-stack);
+        }
+        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+        /* UPDATED: Textarea for pasting lists */
+        textarea.input {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .btn {
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: var(--font-stack);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn.primary { background: var(--primary); color: white; }
+        .btn.primary:hover { background: var(--primary-hover); }
+        .btn.ghost { background: transparent; color: var(--text-muted); }
+        .btn.ghost:hover { background: #27272a; color: var(--text); }
+        .btn.text-danger { background: transparent; color: var(--danger); font-size: 13px; padding: 6px 12px; }
+        .btn.text-danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+        .icon-btn { padding: 8px; border-radius: 50%; background: transparent; color: var(--text-muted); }
+        .icon-btn:hover { background: #3f3f46; color: white; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        /* --- Add Trigger Box --- */
+        .add-trigger-box {
+            width: 100%;
+            background: rgba(39, 39, 42, 0.3);
+            border: 2px dashed var(--card-border);
+            border-radius: var(--radius);
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .add-trigger-box:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .plus-icon { font-size: 20px; font-weight: bold; }
+
+        /* --- Stats / Progress --- */
+        .stats-card { padding: 16px 20px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500;}
+        .progress-bar-bg { height: 6px; background: #27272a; border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease-out; border-radius: 10px; }
+
+        /* --- List --- */
+        .listHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .listHeader h2 { font-size: 18px; margin: 0; color: var(--text); }
+        .list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            background: rgba(39, 39, 42, 0.4);
+            transition: transform 0.2s, border-color 0.2s;
+            animation: slideIn 0.3s ease-out;
+            cursor: pointer;
+        }
+        .item:hover { border-color: #52525b; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .item.done { opacity: 0.6; background: transparent; border-style: dashed; }
+        .item.done .name { text-decoration: line-through; color: var(--text-muted); }
+
+        /* Checkbox */
+        .check-container { position: relative; width: 22px; height: 22px; flex-shrink: 0; }
+        .check { opacity: 0; width: 100%; height: 100%; cursor: pointer; position: absolute; z-index: 2; margin: 0; }
+        .custom-check {
+            width: 22px; height: 22px; border: 2px solid #52525b; border-radius: 6px; position: absolute; top: 0; left: 0; pointer-events: none; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .check:checked + .custom-check { background: var(--success); border-color: var(--success); }
+        .check:checked + .custom-check::after { content: '✔'; font-size: 14px; color: black; display: block; }
+
+        .item-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
+        .name { display: block; font-size: 15px; word-break: break-word; font-weight: 500; }
+        .sub-count { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+        /* Actions */
+        .actions { display: flex; gap: 4px; opacity: 0.5; transition: 0.2s; }
+        .item:hover .actions { opacity: 1; }
+        .action-btn { background: transparent; border: none; cursor: pointer; color: var(--text-muted); padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+        .action-btn:hover { background: #3f3f46; color: white; }
+        .action-btn.delete:hover { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .edit-input { width: 100%; padding: 8px; font-size: 15px; background: #000; border: 1px solid var(--primary); color: white; border-radius: 6px; font-family: var(--font-stack); }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 40px 0; color: var(--text-muted); }
+        .empty-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
+        .hidden { display: none !important; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal { background: var(--card-bg); border: 1px solid var(--card-border); padding: 24px; border-radius: 16px; width: 90%; max-width: 350px; }
+        .modal h3 { margin-top: 0; margin-bottom: 16px; font-size: 18px; color: var(--text); }
+        .modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
+
+        /* Detail View Specifics */
+        .back-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer; color: var(--text-muted); font-size: 14px;}
+        .back-nav:hover { color: var(--primary); }
+
+        .folder-tag {
+            background: rgba(59, 130, 246, 0.1); color: var(--primary);
+            padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-left: 10px; display: inline-block;
+        }
+
+        @media (max-width: 480px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .profile-card { width: 100%; justify-content: space-between; }
+        }
+    </style>
 </head>
 <body>
 <main class="wrap">
-    <header class="card header">
-        <div>
-            <h1 id="title">Workout Tracker</h1>
-            <p class="sub">Add workouts, edit names, auto-saves in your browser.</p>
-        </div>
 
-        <div class="profile">
-            <label class="label" for="userName">Your name</label>
-            <div class="row">
-                <input id="userName" class="input" placeholder="e.g., Poom" autocomplete="name" />
-                <button id="saveNameBtn" class="btn">Save</button>
+    <div id="homeView">
+        <header class="header">
+            <div class="header-text">
+                <h1 id="title">FitTrack</h1>
+                <p class="sub">Organize your sessions.</p>
             </div>
-            <p class="hint">Hi, <span id="helloName">friend</span> 👋</p>
-        </div>
-    </header>
 
-    <section class="card">
-        <h2>Add workout</h2>
-        <div class="row">
-            <input id="workoutInput" class="input" placeholder="e.g., Push-ups 3×12" />
-            <button id="addBtn" class="btn primary">Add</button>
-        </div>
-        <p class="hint">Tip: press Enter to add.</p>
-    </section>
+            <div class="profile-card">
+                <div class="greeting">
+                    <span class="avatar">💪</span>
+                    <span>
+                        <p class="hint">Welcome back,</p>
+                        <h3 id="helloName">Athlete</h3>
+                    </span>
+                </div>
+                <button id="editNameBtn" class="btn icon-btn" title="Edit Name">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+            </div>
+        </header>
 
-    <section class="card">
-        <div class="listHeader">
-            <h2>Your workouts</h2>
-            <button id="clearBtn" class="btn danger ghost" title="Remove all workouts">Clear all</button>
-        </div>
-        <ul id="list" class="list" aria-live="polite"></ul>
-        <p id="empty" class="empty">No workouts yet. Add one above.</p>
-    </section>
+        <section class="card stats-card" style="margin-top: 24px;">
+            <div class="progress-header">
+                <span>Total Completion</span>
+                <span id="homeProgressText">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="homeProgressBar" class="progress-bar-fill"></div>
+            </div>
+        </section>
 
-    <footer class="footer">
-        <small>Data is stored locally in your browser (localStorage).</small>
-    </footer>
+        <button id="openAddSessionModalBtn" class="add-trigger-box" style="margin-top: 24px;">
+            <span class="plus-icon">+</span>
+            <span>Create New Session Folder</span>
+        </button>
+
+        <section class="list-section" style="margin-top: 24px;">
+            <div class="listHeader">
+                <h2>Your Sessions</h2>
+                <button id="clearSessionsBtn" class="btn text-danger">Clear All</button>
+            </div>
+            <ul id="sessionList" class="list" aria-live="polite"></ul>
+            <div id="emptySessions" class="empty-state">
+                <div class="empty-icon">📁</div>
+                <p>No sessions yet.<br>Create a folder (e.g. "Leg Day") above.</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="detailView" class="hidden">
+        <div class="back-nav" id="backBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Back to Sessions</span>
+        </div>
+
+        <div class="header" style="padding-top: 0; margin-bottom: 20px;">
+            <div class="header-text">
+                <h1 id="detailTitle">Session Name</h1>
+                <span class="folder-tag">Editing Exercises</span>
+            </div>
+        </div>
+
+        <section class="card stats-card">
+            <div class="progress-header">
+                <span>Session Progress</span>
+                <span id="detailProgressText">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="detailProgressBar" class="progress-bar-fill"></div>
+            </div>
+        </section>
+
+        <button id="openAddExerciseModalBtn" class="add-trigger-box" style="margin-top: 24px;">
+            <span class="plus-icon">+</span>
+            <span>Add Exercises (Paste List Here)</span>
+        </button>
+
+        <section class="list-section" style="margin-top: 24px;">
+            <div class="listHeader">
+                <h2>Exercises</h2>
+            </div>
+            <ul id="exerciseList" class="list" aria-live="polite"></ul>
+            <div id="emptyExercises" class="empty-state">
+                <div class="empty-icon">📝</div>
+                <p>Empty session.<br>Paste your workout list above!</p>
+            </div>
+        </section>
+    </div>
+
+    <div id="nameModal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>Your Profile Name</h3>
+            <input id="userNameInput" class="input" placeholder="e.g., Poom" autocomplete="name" />
+            <div class="modal-actions">
+                <button id="closeNameModal" class="btn ghost">Cancel</button>
+                <button id="saveNameBtn" class="btn primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addSessionModal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>New Session Name</h3>
+            <input id="newSessionInput" class="input" placeholder="e.g., Leg Day, Mikasa" />
+            <div class="modal-actions">
+                <button id="closeAddSessionModal" class="btn ghost">Cancel</button>
+                <button id="confirmAddSessionBtn" class="btn primary">Create Folder</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addExerciseModal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>Paste Your Exercises</h3>
+            <p style="font-size: 13px; color: #a1a1aa; margin-top: 0;">Paste a list. Each new line becomes a separate item.</p>
+            <textarea id="newExerciseInput" class="input" placeholder="e.g.&#10;Push Ups 3x10&#10;Squats 3x10&#10;Plank 30s"></textarea>
+            <div class="modal-actions">
+                <button id="closeAddExerciseModal" class="btn ghost">Cancel</button>
+                <button id="confirmAddExerciseBtn" class="btn primary">Add Exercises</button>
+            </div>
+        </div>
+    </div>
+
 </main>
+<script>
+    const STORAGE_KEY = "fit_track_v5_smart_paste";
 
-<script src="app.js"></script>
+    // Global State
+    let state = {
+        name: "Athlete",
+        activeSessionId: null,
+        sessions: []
+    };
+
+    const els = {
+        // Views
+        homeView: document.getElementById("homeView"),
+        detailView: document.getElementById("detailView"),
+        backBtn: document.getElementById("backBtn"),
+
+        // Home Elements
+        helloName: document.getElementById("helloName"),
+        sessionList: document.getElementById("sessionList"),
+        emptySessions: document.getElementById("emptySessions"),
+        homeProgressBar: document.getElementById("homeProgressBar"),
+        homeProgressText: document.getElementById("homeProgressText"),
+        clearSessionsBtn: document.getElementById("clearSessionsBtn"),
+
+        // Detail Elements
+        detailTitle: document.getElementById("detailTitle"),
+        exerciseList: document.getElementById("exerciseList"),
+        emptyExercises: document.getElementById("emptyExercises"),
+        detailProgressBar: document.getElementById("detailProgressBar"),
+        detailProgressText: document.getElementById("detailProgressText"),
+
+        // Modals & Inputs
+        nameModal: document.getElementById("nameModal"),
+        userNameInput: document.getElementById("userNameInput"),
+        editNameBtn: document.getElementById("editNameBtn"),
+        saveNameBtn: document.getElementById("saveNameBtn"),
+        closeNameModal: document.getElementById("closeNameModal"),
+
+        addSessionModal: document.getElementById("addSessionModal"),
+        openAddSessionModalBtn: document.getElementById("openAddSessionModalBtn"),
+        newSessionInput: document.getElementById("newSessionInput"),
+        closeAddSessionModal: document.getElementById("closeAddSessionModal"),
+        confirmAddSessionBtn: document.getElementById("confirmAddSessionBtn"),
+
+        addExerciseModal: document.getElementById("addExerciseModal"),
+        openAddExerciseModalBtn: document.getElementById("openAddExerciseModalBtn"),
+        newExerciseInput: document.getElementById("newExerciseInput"), // This is now a TEXTAREA
+        closeAddExerciseModal: document.getElementById("closeAddExerciseModal"),
+        confirmAddExerciseBtn: document.getElementById("confirmAddExerciseBtn"),
+    };
+
+    function uid() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                return {
+                    name: parsed.name || "Athlete",
+                    activeSessionId: null,
+                    sessions: Array.isArray(parsed.sessions) ? parsed.sessions : []
+                };
+            }
+        } catch(e) { console.error(e); }
+        return { name: "Athlete", activeSessionId: null, sessions: [] };
+    }
+
+    function saveState() {
+        const dataToSave = {
+            name: state.name,
+            sessions: state.sessions
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    }
+
+    // --- Render Logic ---
+
+    function render() {
+        els.helloName.textContent = state.name;
+
+        if (state.activeSessionId) {
+            renderDetailView();
+        } else {
+            renderHomeView();
+        }
+    }
+
+    function renderHomeView() {
+        els.homeView.classList.remove("hidden");
+        els.detailView.classList.add("hidden");
+
+        const totalSessions = state.sessions.length;
+        const completedSessions = state.sessions.filter(s => s.done).length;
+        const pct = totalSessions ? Math.round((completedSessions / totalSessions) * 100) : 0;
+
+        els.homeProgressBar.style.width = `${pct}%`;
+        els.homeProgressText.textContent = `${pct}%`;
+        els.homeProgressText.style.color = pct === 100 ? "var(--success)" : "var(--text-muted)";
+
+        els.sessionList.innerHTML = "";
+        els.emptySessions.classList.toggle("hidden", state.sessions.length > 0);
+        els.clearSessionsBtn.style.visibility = state.sessions.length ? "visible" : "hidden";
+
+        state.sessions.forEach(session => {
+            const li = document.createElement("li");
+            li.className = `item ${session.done ? "done" : ""}`;
+
+            const checkContainer = document.createElement("div");
+            checkContainer.className = "check-container";
+            checkContainer.onclick = (e) => e.stopPropagation();
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "check";
+            checkbox.checked = session.done;
+            checkbox.onchange = () => {
+                session.done = checkbox.checked;
+                saveState();
+                render();
+            };
+
+            const customCheck = document.createElement("div");
+            customCheck.className = "custom-check";
+            checkContainer.append(checkbox, customCheck);
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "item-content";
+            contentDiv.onclick = () => {
+                state.activeSessionId = session.id;
+                render();
+            };
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "name";
+            nameSpan.textContent = session.text;
+
+            const subCount = document.createElement("span");
+            subCount.className = "sub-count";
+            const exCount = session.exercises ? session.exercises.length : 0;
+            subCount.textContent = `${exCount} exercise${exCount !== 1 ? 's' : ''}`;
+
+            contentDiv.append(nameSpan, subCount);
+
+            const actionsDiv = document.createElement("div");
+            actionsDiv.className = "actions";
+            actionsDiv.onclick = (e) => e.stopPropagation();
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "action-btn delete";
+            delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+            delBtn.onclick = () => {
+                if(confirm(`Delete "${session.text}"?`)) {
+                    state.sessions = state.sessions.filter(s => s.id !== session.id);
+                    saveState();
+                    render();
+                }
+            };
+
+            actionsDiv.append(delBtn);
+            li.append(checkContainer, contentDiv, actionsDiv);
+            els.sessionList.appendChild(li);
+        });
+    }
+
+    function renderDetailView() {
+        const session = state.sessions.find(s => s.id === state.activeSessionId);
+        if (!session) {
+            state.activeSessionId = null;
+            render();
+            return;
+        }
+
+        els.homeView.classList.add("hidden");
+        els.detailView.classList.remove("hidden");
+        els.detailTitle.textContent = session.text;
+
+        const exercises = session.exercises || [];
+
+        const total = exercises.length;
+        const done = exercises.filter(e => e.done).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
+
+        els.detailProgressBar.style.width = `${pct}%`;
+        els.detailProgressText.textContent = `${pct}%`;
+        els.detailProgressText.style.color = pct === 100 ? "var(--success)" : "var(--text-muted)";
+
+        els.exerciseList.innerHTML = "";
+        els.emptyExercises.classList.toggle("hidden", exercises.length > 0);
+
+        exercises.forEach(ex => {
+            const li = document.createElement("li");
+            li.className = `item ${ex.done ? "done" : ""}`;
+
+            const checkContainer = document.createElement("div");
+            checkContainer.className = "check-container";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "check";
+            checkbox.checked = ex.done;
+            checkbox.onchange = () => {
+                ex.done = checkbox.checked;
+                saveState();
+                render();
+            };
+
+            const customCheck = document.createElement("div");
+            customCheck.className = "custom-check";
+            checkContainer.append(checkbox, customCheck);
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "item-content";
+
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "name";
+            nameSpan.textContent = ex.text;
+            contentDiv.appendChild(nameSpan);
+
+            const actionsDiv = document.createElement("div");
+            actionsDiv.className = "actions";
+
+            const editBtn = document.createElement("button");
+            editBtn.className = "action-btn";
+            editBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+            editBtn.onclick = () => {
+                const input = document.createElement("input");
+                input.className = "edit-input";
+                input.value = ex.text;
+                contentDiv.innerHTML = "";
+                contentDiv.appendChild(input);
+                input.focus();
+                actionsDiv.style.display = "none";
+
+                const commit = () => {
+                    if(input.value.trim()) ex.text = input.value.trim();
+                    saveState();
+                    render();
+                };
+                input.onblur = commit;
+                input.onkeydown = (e) => { if(e.key==="Enter") commit(); };
+            };
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "action-btn delete";
+            delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`;
+            delBtn.onclick = () => {
+                if(confirm("Delete this exercise?")) {
+                    session.exercises = session.exercises.filter(e => e.id !== ex.id);
+                    saveState();
+                    render();
+                }
+            };
+
+            actionsDiv.append(editBtn, delBtn);
+            li.append(checkContainer, contentDiv, actionsDiv);
+            els.exerciseList.appendChild(li);
+        });
+    }
+
+    // --- Actions ---
+
+    // Back
+    els.backBtn.addEventListener("click", () => {
+        state.activeSessionId = null;
+        render();
+    });
+
+    // Add Session
+    const toggleSessionModal = (show) => {
+        els.addSessionModal.classList.toggle("hidden", !show);
+        if(show) { els.newSessionInput.value = ""; els.newSessionInput.focus(); }
+    };
+    els.openAddSessionModalBtn.onclick = () => toggleSessionModal(true);
+    els.closeAddSessionModal.onclick = () => toggleSessionModal(false);
+
+    els.confirmAddSessionBtn.onclick = () => {
+        const text = els.newSessionInput.value.trim();
+        if(text) {
+            state.sessions.unshift({ id: uid(), text, done: false, exercises: [] });
+            saveState();
+            render();
+            toggleSessionModal(false);
+        }
+    };
+    els.newSessionInput.onkeydown = (e) => {
+        if(e.key === "Enter") els.confirmAddSessionBtn.click();
+        if(e.key === "Escape") toggleSessionModal(false);
+    };
+
+    // Add Exercise (SMART PASTE LOGIC HERE)
+    const toggleExerciseModal = (show) => {
+        els.addExerciseModal.classList.toggle("hidden", !show);
+        if(show) { els.newExerciseInput.value = ""; els.newExerciseInput.focus(); }
+    };
+    els.openAddExerciseModalBtn.onclick = () => toggleExerciseModal(true);
+    els.closeAddExerciseModal.onclick = () => toggleExerciseModal(false);
+
+    els.confirmAddExerciseBtn.onclick = () => {
+        const rawText = els.newExerciseInput.value.trim();
+        const session = state.sessions.find(s => s.id === state.activeSessionId);
+
+        if(rawText && session) {
+            if(!session.exercises) session.exercises = [];
+
+            // --- THE FIX: Split by new line ---
+            const lines = rawText.split(/\r?\n/);
+
+            lines.forEach(line => {
+                const cleanLine = line.trim();
+                // Ignore empty lines
+                if (cleanLine) {
+                    session.exercises.push({ id: uid(), text: cleanLine, done: false });
+                }
+            });
+
+            saveState();
+            render();
+            toggleExerciseModal(false);
+        }
+    };
+
+    // Name Modal
+    const toggleNameModal = (show) => {
+        els.nameModal.classList.toggle("hidden", !show);
+        if(show) els.userNameInput.focus();
+    };
+    els.editNameBtn.onclick = () => { els.userNameInput.value = state.name; toggleNameModal(true); };
+    els.closeNameModal.onclick = () => toggleNameModal(false);
+    els.saveNameBtn.onclick = () => {
+        const val = els.userNameInput.value.trim();
+        if(val) { state.name = val; saveState(); render(); }
+        toggleNameModal(false);
+    };
+
+    // Clear All
+    els.clearSessionsBtn.onclick = () => {
+        if(confirm("Delete ALL data?")) { state.sessions = []; saveState(); render(); }
+    };
+
+    // Init
+    state = loadState();
+    render();
+
+</script>
 </body>
 </html>
