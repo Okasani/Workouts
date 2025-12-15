@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Workout Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<main class="wrap">
+    <header class="card header">
+        <div>
+            <h1 id="title">Workout Tracker</h1>
+            <p class="sub">Add workouts, edit names, auto-saves in your browser.</p>
+        </div>
+
+        <div class="profile">
+            <label class="label" for="userName">Your name</label>
+            <div class="row">
+                <input id="userName" class="input" placeholder="e.g., Poom" autocomplete="name" />
+                <button id="saveNameBtn" class="btn">Save</button>
+            </div>
+            <p class="hint">Hi, <span id="helloName">friend</span> 👋</p>
+        </div>
+    </header>
+
+    <section class="card">
+        <h2>Add workout</h2>
+        <div class="row">
+            <input id="workoutInput" class="input" placeholder="e.g., Push-ups 3×12" />
+            <button id="addBtn" class="btn primary">Add</button>
+        </div>
+        <p class="hint">Tip: press Enter to add.</p>
+    </section>
+
+    <section class="card">
+        <div class="listHeader">
+            <h2>Your workouts</h2>
+            <button id="clearBtn" class="btn danger ghost" title="Remove all workouts">Clear all</button>
+        </div>
+        <ul id="list" class="list" aria-live="polite"></ul>
+        <p id="empty" class="empty">No workouts yet. Add one above.</p>
+    </section>
+
+    <footer class="footer">
+        <small>Data is stored locally in your browser (localStorage).</small>
+    </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
