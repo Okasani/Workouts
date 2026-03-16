@@ -1,0 +1,349 @@
+:root {
+    --bg-main: #0f172a; /* Deep slate */
+    --bg-glass: rgba(30, 41, 59, 0.7);
+    --bg-glass-hover: rgba(51, 65, 85, 0.8);
+    --border-glass: rgba(255, 255, 255, 0.1);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    
+    --accent-maki: #4ade80; /* vibrant green */
+    --accent-maki-bg: rgba(74, 222, 128, 0.15);
+    
+    --accent-yuki: #fb923c; /* vibrant orange/red */
+    --accent-yuki-bg: rgba(251, 146, 60, 0.15);
+
+    --accent-rest: #38bdf8;
+    --accent-rest-bg: rgba(56, 189, 248, 0.15);
+
+    --font-sans: 'Outfit', sans-serif;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(251, 146, 60, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.app-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, #f8fafc, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Glassmorphism Stats */
+.stats-glass {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.stat {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-val {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.stat-lbl {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-right: 0.25rem;
+}
+
+.filter-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: white;
+    color: black;
+    border-color: white;
+}
+
+.filter-btn.maki-filter.active {
+    background: var(--accent-maki);
+    color: #064e3b;
+    border-color: var(--accent-maki);
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+}
+
+.filter-btn.yuki-filter.active {
+    background: var(--accent-yuki);
+    color: #431407;
+    border-color: var(--accent-yuki);
+    box-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    padding: 0 0.25rem;
+}
+
+.tab {
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border-glass);
+    background: var(--bg-glass);
+    color: var(--text-secondary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+}
+
+.tab:hover:not(.active) {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.tab.active {
+    background: white;
+    color: black;
+    border-color: white;
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+}
+
+/* Day Container */
+.day {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.day.show {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.badge-maki {
+    background: var(--accent-maki-bg);
+    color: var(--accent-maki);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.badge-yuki {
+    background: var(--accent-yuki-bg);
+    color: var(--accent-yuki);
+    border: 1px solid rgba(251, 146, 60, 0.2);
+}
+
+.badge-rest {
+    background: var(--accent-rest-bg);
+    color: var(--accent-rest);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.theme {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+/* Exercises */
+.exgroup {
+    margin-bottom: 1.5rem;
+}
+
+.exgroup-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exgroup-title::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+}
+
+.badge-maki ~ .exgroup .exgroup-title::before { background: var(--accent-maki); box-shadow: 0 0 8px var(--accent-maki); }
+.badge-yuki ~ .exgroup .exgroup-title::before { background: var(--accent-yuki); box-shadow: 0 0 8px var(--accent-yuki); }
+.badge-rest ~ .exgroup .exgroup-title::before { background: var(--accent-rest); box-shadow: 0 0 8px var(--accent-rest); }
+
+.ex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.ex:hover {
+    transform: translateX(4px);
+    background: var(--bg-glass-hover);
+}
+
+.ex-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.ex-detail {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    background: rgba(0,0,0,0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.badge-maki ~ .exgroup .ex .ex-detail { color: var(--accent-maki); }
+.badge-yuki ~ .exgroup .ex .ex-detail { color: var(--accent-yuki); }
+.badge-rest ~ .exgroup .ex .ex-detail { color: var(--accent-rest); }
+
+/* Note */
+.note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-glass);
+    position: relative;
+    overflow: hidden;
+}
+
+.note::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--text-secondary);
+}
+
+.badge-maki ~ .note::before { background: var(--accent-maki); }
+.badge-yuki ~ .note::before { background: var(--accent-yuki); }
+.badge-rest ~ .note::before { background: var(--accent-rest); }

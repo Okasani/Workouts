@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJK Workout Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>JJK Training Protocol</h1>
+            <p class="subtitle">Maki & Yuki's 6-Day Power Program</p>
+        </header>
+
+        <section class="stats-glass">
+            <div class="stat"><div class="stat-val">~2,150</div><div class="stat-lbl">KCAL / DAY</div></div>
+            <div class="stat"><div class="stat-val">91g</div><div class="stat-lbl">PROTEIN / DAY</div></div>
+            <div class="stat"><div class="stat-val">6 Days</div><div class="stat-lbl">PER WEEK</div></div>
+        </section>
+
+        <!-- New filter feature -->
+        <div class="filter-controls">
+            <span class="filter-label">Filter by:</span>
+            <button class="filter-btn active" data-filter="all">All Days</button>
+            <button class="filter-btn maki-filter" data-filter="maki">Maki's Routine</button>
+            <button class="filter-btn yuki-filter" data-filter="yuki">Yuki's Routine</button>
+        </div>
+
+        <main class="content-area">
+            <div class="tabs" id="tabs"></div>
+            <div class="days-container" id="days"></div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
